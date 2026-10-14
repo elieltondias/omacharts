@@ -760,12 +760,18 @@ differ when a launch was given the flag:
 $ omacharts provider list
 yahoo    Yahoo Finance · Every listing the symbol search covers · delayed 15 min for indexes, 10 for futures   (stored, not in use)
 tos      thinkorswim · US listings, from your thinkorswim account · live, as each print arrives · experimental   (in use, not stored · not signed in)
+tradingview TradingView · Stocks, futures, FX and crypto on TradingView's public feed · live, as each print arrives · experimental
   [exit 0]
 ```
 
+TradingView needs nothing set up either: it charts the public feed as a
+guest, streaming like thinkorswim. It rests on an undocumented protocol,
+which is what the `experimental` beside it means — it works until
+TradingView changes their web client.
+
 ## Signing in to a feed that charts your own account
 
-Yahoo needs nothing. thinkorswim charts your Schwab account, so it has to be
+Yahoo and TradingView need nothing. thinkorswim charts your Schwab account, so it has to be
 signed in to once, and `provider status` is how you find out where you stand:
 
 ```

@@ -91,7 +91,13 @@ system.
 ## Data
 
 Omacharts works with more than one data feed. Yahoo Finance is the default
-and needs nothing set up. The other is thinkorswim, the trading platform of
+and needs nothing set up. TradingView's public feed needs nothing either
+and streams: every chart on screen is a guest subscription, bars arrive as
+they print, and nothing on that path asks for data on a timer. It charts the
+listings the search covers — US, European and Asian stocks, futures, FX and
+crypto — but it rests on an undocumented protocol, so it is marked
+experimental and can stop working when TradingView changes their web client.
+The other is thinkorswim, the trading platform of
 Charles Schwab, which charts your own account's data and streams it: every
 chart on screen is a subscription to the gateway, bars arrive as they print,
 and nothing on that path asks for data on a timer. Several charts showing the
@@ -103,6 +109,7 @@ Pick one in Preferences → Market data → Provider, or from a terminal:
 
 ```
 omacharts config set provider tos
+omacharts config set provider tradingview
 omacharts --provider tos          # this launch only
 ```
 

@@ -27,6 +27,7 @@
 
 pub mod synthetic;
 pub mod tos;
+pub mod tradingview;
 pub mod yahoo;
 
 use crate::provider::{Delivery, Provider};
@@ -34,6 +35,7 @@ use crate::symbols::InstrumentKind;
 
 pub use synthetic::Synthetic;
 pub use tos::Tos;
+pub use tradingview::TradingView;
 pub use yahoo::Yahoo;
 
 /// A feed as it is offered: what to call it, what it serves, and whether
@@ -175,6 +177,7 @@ pub fn sign_out(id: &str) -> Result<(), String> {
 pub fn connected(id: &str) -> bool {
     match listed(id).map(|feed| feed.id) {
         Some("tos") => tos::session::connected(),
+        Some("tradingview") => tradingview_market::connected(),
         _ => false,
     }
 }
@@ -194,7 +197,7 @@ pub fn places(id: &str) -> Vec<(&'static str, String)> {
 /// Order is the interface: the first is the default, the panel lists them
 /// like this, and a feed added at the end cannot change what an existing
 /// install is using.
-pub const LISTED: &[Listed] = &[yahoo::LISTED, tos::LISTED];
+pub const LISTED: &[Listed] = &[yahoo::LISTED, tos::LISTED, tradingview::LISTED];
 
 /// What runs when nothing has been chosen.
 pub const DEFAULT: &str = LISTED[0].id;
@@ -306,6 +309,7 @@ pub fn listed(id: &str) -> Option<&'static Listed> {
 pub fn selected(stored: Option<&str>) -> Box<dyn Provider> {
     match stored.and_then(listed) {
         Some(feed) if feed.id == tos::LISTED.id => Box::new(Tos::new()),
+        Some(feed) if feed.id == tradingview::LISTED.id => Box::new(TradingView::new()),
         _ => Box::new(Yahoo::new()),
     }
 }
@@ -325,6 +329,7 @@ mod tests {
             assert_eq!(selected(Some(feed.id)).id(), feed.id);
         }
         assert!(!tos_market::connected(), "a chosen feed must not have connected");
+        assert!(!tradingview_market::connected(), "a chosen feed must not have connected");
     }
 
     #[test]
@@ -365,6 +370,16 @@ mod tests {
         );
         assert!(tos.contains("live"), "{tos}");
         assert!(!tos.contains("delayed"), "{tos}");
+
+        // TradingView streams too: guest sockets, no account, same rule.
+        let tradingview = freshness("tradingview");
+        assert_eq!(
+            selected(Some("tradingview")).delivery(),
+            Delivery::Streamed,
+            "the claim below is only honest while this holds"
+        );
+        assert!(tradingview.contains("live"), "{tradingview}");
+        assert!(!tradingview.contains("delayed"), "{tradingview}");
 
         // And a feed that says nothing about streaming is polled, and says
         // so rather than claiming to be live.

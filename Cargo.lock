@@ -1080,6 +1080,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tos-market",
+ "tradingview-market",
  "ureq",
 ]
 
@@ -1664,6 +1665,17 @@ checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
 
 [[package]]
 name = "tos-market"
+version = "0.1.0"
+dependencies = [
+ "rustls",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tungstenite",
+]
+
+[[package]]
+name = "tradingview-market"
 version = "0.1.0"
 dependencies = [
  "rustls",
